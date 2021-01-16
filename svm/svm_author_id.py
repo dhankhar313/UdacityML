@@ -10,7 +10,7 @@ import sys
 from time import time
 import pickle
 
-sys.path.append(r"C:\Users\RahulDhankhar\PycharmProjects\UdacityML\tools")
+sys.path.append(r"../tools/")
 from email_preprocess import preprocess
 from sklearn import svm
 from sklearn.metrics import accuracy_score

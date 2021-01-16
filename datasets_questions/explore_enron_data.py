@@ -5,7 +5,7 @@
     loads up the dataset (pickled dict of dicts).
 
     The dataset has the form:
-    enron_data["LASTNAME FIRSTNAME MIDDLEINITIAL"] = { features_dict }
+    enron_data["LASTNAME FIRSTNAME MIDDLE INITIAL"] = { features_dict }
 
     {features_dict} is a dictionary of features associated with that person.
     You should explore features_dict as part of the mini-project,
@@ -18,5 +18,12 @@
 import pickle
 
 enron_data = pickle.load(open("../final_project/final_project_dataset.pkl", "rb"))
-
-
+# print(enron_data)
+names = list(enron_data.keys())
+count = 0
+# print(names)
+for i in range(len(enron_data)):
+    if enron_data[names[i]]['poi'] == 1:
+        count += 1
+print(count)
+print(enron_data['COLWELL WESLEY']['from_this_person_to_poi'])
