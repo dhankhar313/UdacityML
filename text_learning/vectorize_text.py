@@ -2,7 +2,7 @@ import os
 import pickle
 import re
 import sys
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, ENGLISH_STOP_WORDS
 
 sys.path.append("../tools/")
 from parse_out_email_text import parseOutText
@@ -32,28 +32,26 @@ word_data = []
 # can take a long time
 # temp_counter helps you only look at the first 200 emails in the list so you
 # can iterate your modifications quicker
-temp_counter = 0
-
+stop_words = set(ENGLISH_STOP_WORDS)
 for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
     for path in from_person:
         # only look at first 200 emails when developing
         # once everything is working, remove this line to run over full dataset
-        temp_counter += 1
-        if temp_counter < 200:
-            path = os.path.join('..', path[:-1])
-            print(path)
-            email = open(path, "r")
-
-            # use parseOutText to extract the text from the opened email
-
-            # use str.replace() to remove any instances of the words
-            # ["sara", "shackleton", "chris", "germani"]
-
-            # append the text to word_data
-
-            # append a 0 to from_data if email is from Sara, and 1 if email is from Chris
-
-            email.close()
+        path = os.path.join('..', path[:-1])
+        # print(path)
+        email = open(path, "r")
+        # use parseOutText to extract the text from the opened email
+        data = parseOutText(email)
+        # use str.replace() to remove any instances of the words
+        names = ["sara", "shackleton", "chris", "germani"]
+        # append the text to word_data
+        for i in data:
+            if i in names:
+                data.replace(i, '')
+        word_data.append(data)
+        # append a 0 to from_data if email is from Sara, and 1 if email is from Chris
+        from_data.append(0) if name == 'Sara' else from_data.append(1)
+        email.close()
 
 print("emails processed")
 from_sara.close()
@@ -61,5 +59,7 @@ from_chris.close()
 
 pickle.dump(word_data, open("your_word_data.pkl", "wb"))
 pickle.dump(from_data, open("your_email_authors.pkl", "wb"))
-
 # in Part 4, do TfIdf vectorization here
+vectorizer = TfidfVectorizer(stop_words=stop_words)
+x = vectorizer.fit_transform(word_data)
+print(vectorizer.get_feature_names()[34597])
