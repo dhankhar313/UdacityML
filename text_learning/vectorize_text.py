@@ -27,6 +27,8 @@ from_chris = open("from_chris.txt", "r")
 from_data = []
 word_data = []
 
+# count = 0
+
 # temp_counter is a way to speed up the development--there are
 # thousands of emails from Sara and Chris, so running over all of them
 # can take a long time
@@ -35,22 +37,28 @@ word_data = []
 stop_words = set(ENGLISH_STOP_WORDS)
 for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
     for path in from_person:
-        # only look at first 200 emails when developing
-        # once everything is working, remove this line to run over full dataset
         path = os.path.join('..', path[:-1])
-        # print(path)
+        print(path)
         email = open(path, "r")
-        # use parseOutText to extract the text from the opened email
         data = parseOutText(email)
-        # use str.replace() to remove any instances of the words
-        names = ["sara", "shackleton", "chris", "germani"]
-        # append the text to word_data
+        names = ["sara", "shackleton", "chris", "germani", "sshacklensf", "cgermannsf", "germany"]
+        data = data.split()
+        final = []
         for i in data:
-            if i in names:
-                data.replace(i, '')
-        word_data.append(data)
+            if i not in names:
+                flag = 0
+                value = ''
+                for j in names:
+                    if i.startswith(j) or i.endswith(j):
+                        flag += 1
+                        value = j
+                if flag == 0:
+                    final.append(i)
+                else:
+                    final.append(i.replace(value, ''))
+        word_data.append(' '.join(final))
         # append a 0 to from_data if email is from Sara, and 1 if email is from Chris
-        from_data.append(0) if name == 'Sara' else from_data.append(1)
+        from_data.append(0) if name == 'sara' else from_data.append(1)
         email.close()
 
 print("emails processed")
@@ -62,4 +70,3 @@ pickle.dump(from_data, open("your_email_authors.pkl", "wb"))
 # in Part 4, do TfIdf vectorization here
 vectorizer = TfidfVectorizer(stop_words=stop_words)
 x = vectorizer.fit_transform(word_data)
-print(vectorizer.get_feature_names()[34597])

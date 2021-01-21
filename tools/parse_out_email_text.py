@@ -2,7 +2,7 @@ from nltk.stem.snowball import SnowballStemmer
 import string
 
 
-def parseOutText(f):
+def parseOutText(file):
     """ given an opened email file f, parse out all text below the
         metadata block at the top
         (in Part 2, you will also add stemming capabilities)
@@ -14,28 +14,30 @@ def parseOutText(f):
         text = parseOutText(f)
         
         """
-
-    f.seek(0)  # go back to beginning of file (annoying)
-    all_text = f.read()
-    # split off metadata
-    content = all_text.split("X-FileName:")
-    words = ""
+    data = []
+    for line in file.readlines():
+        word_list = line.replace(",", "").replace(".", "").replace("(", "").replace(")", "").replace("\"", "").replace(
+            ":", "").replace('\n', '').replace('<', '').replace('>', '').replace('!', '').replace("[", '')\
+            .replace(']', '').strip().split()
+        data.append(' '.join(word_list))
+    # data = [item for sublist in data for item in sublist]
+    data = ' '.join(data)
+    content = data.split("X-FileName")
+    words = []
     if len(content) > 1:
-        # remove punctuation
-        text_string = content[-1].translate(str.maketrans("", "", string.punctuation))
-        text_string = text_string.replace('\n', '')
         # project part 2: comment out the line below
         # words = text_string
         # split the text string into individual words, stem each word,
         # and append the stemmed word to words (make sure there's a single
         # space between each stemmed word)
         stemmer = SnowballStemmer('english')
-        words = [stemmer.stem(i) for i in text_string.split()]
+        words = [stemmer.stem(i) for i in content[-1].split()]
     return ' '.join(words)
 
 
 def main():
-    ff = open("../text_learning/test_email.txt", "r")
+    ff = open("..\maildir/jones-t/all_documents/11004", 'r')
+    # ff = open("../text_learning/test_email.txt", "r")
     text = parseOutText(ff)
     print(text)
 
