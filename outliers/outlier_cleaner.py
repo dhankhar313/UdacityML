@@ -1,4 +1,4 @@
-def outlierCleaner(predictions, ages, net_worths):
+def outlierCleaner(predictions, features, labels):
     """
         Clean away the 10% of points that have the largest
         residual errors (difference between the prediction
@@ -8,19 +8,19 @@ def outlierCleaner(predictions, ages, net_worths):
         each tuple is of the form (age, net_worth, error).
     """
     cleaned_data = []
-    errors = abs(net_worths - predictions)
+    errors = abs(labels - predictions)
     errors = [item for sublist in errors for item in sublist]
     # errors = [round(i, 2) for i in errors]
     # print('Errors:', errors)
-    ages = [item for sublist in ages for item in sublist]
-    net_worths = [item for sublist in net_worths for item in sublist]
-    # net_worths = [round(i, 2) for i in net_worths]
+    features = [item for sublist in features for item in sublist]
+    labels = [item for sublist in labels for item in sublist]
+    # labels = [round(i, 2) for i in labels]
     data = {}
     for i in range(len(errors)):
-        data[errors[i]] = (ages[i], net_worths[i], errors[i])
+        data[errors[i]] = (features[i], labels[i], errors[i])
     errors = sorted(data.keys(), reverse=True)
     # print("Sorted errors:", errors)
-    temp = int(len(ages) / 10)
+    temp = int(len(features) / 10)
     errors = errors[temp:]
     # print('Shortened Errors:', errors)
     for i in errors:
